@@ -1,0 +1,30 @@
+import request from "supertest";
+import { MongoClient, Db } from "mongodb";
+import app from "../src/app";
+
+describe("API", () => {
+  let connection: MongoClient;
+  let db: Db;
+
+  beforeAll(async () => {
+    connection = await MongoClient.connect("mongodb://localhost:27017", {
+      useNewUrlParser: true,
+    });
+    db = await connection.db("test");
+  })
+
+  afterAll(async () => {
+    await connection.close()
+  })
+
+  it("Returns balance", () => {
+    return request(app)
+      .get("/balances/1")
+      .expect("Content-Type", /json/)
+      .expect(200)
+      .then(resp => {
+        expect(resp.body).toEqual({})
+      })
+  });
+
+})
